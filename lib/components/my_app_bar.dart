@@ -16,7 +16,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       actions: actions,
-      centerTitle: true,
+      centerTitle: false,
       title: Text(
         title,
         style: TextStyle(

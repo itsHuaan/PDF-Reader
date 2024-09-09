@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_reader/components/my_app_bar.dart';
+import 'package:pdf_reader/components/my_bottom_bar.dart';
 import 'package:pdf_reader/pages/all_file_page.dart';
 import 'package:pdf_reader/pages/favourite_file_page.dart';
 import 'package:pdf_reader/pages/recent_file_page.dart';
@@ -37,6 +38,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      bottomNavigationBar: MyBottomBar(
+        onTap: navigateBottomBar,
+      ),
       appBar: MyAppBar(
         title: _title[_selectedIndex],
         actions: [
@@ -48,6 +52,7 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+      body: _pages[_selectedIndex],
     );
   }
 }
