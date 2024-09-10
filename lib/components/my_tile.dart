@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf_reader/models/file_model.dart';
 
 class MyTile extends StatelessWidget {
@@ -43,8 +44,14 @@ class MyTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(fileModel.file.path.split('/').last),
-                Text(fileModel.file.statSync().modified.toLocal().toString()), // Hiển thị ngày tạo
+                Text(
+                  fileModel.file.path.split('/').last,
+                ),
+                Text(
+                  'Created: ${DateFormat('dd/MM/yyyy').format(
+                    fileModel.file.statSync().modified.toLocal(),
+                  )}',
+                ), // Hiển thị ngày tạo
               ],
             ),
             const Spacer(),

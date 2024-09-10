@@ -25,7 +25,9 @@ class FavoriteFilePage extends StatelessWidget {
                   onTap: (fileModel) => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PDFViewPage(),
+                      builder: (context) => PDFViewPage(
+                        file: fileModel.file,
+                      ),
                     ),
                   ),
                   onFavoriteToggle: (fileModel) {

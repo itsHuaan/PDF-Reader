@@ -28,7 +28,9 @@ class _AllFilePageState extends State<AllFilePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const PDFViewPage(),
+        builder: (context) => PDFViewPage(
+          file: fileModel.file,
+        ),
       ),
     );
   }

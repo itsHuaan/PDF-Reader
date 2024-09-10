@@ -1,16 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class PDFViewPage extends StatelessWidget {
-  const PDFViewPage({super.key});
+  final File file;
+  const PDFViewPage({
+    super.key,
+    required this.file,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("PDF file"),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(file.path.split('/').last),
+      ),
+      body: PDFView(
+        filePath: file.path,
       ),
     );
   }
