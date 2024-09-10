@@ -5,18 +5,24 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class PDFProvider with ChangeNotifier {
-  final List<FileModel> _pdfFiles = [];
+  List<FileModel> _pdfFiles = [];
   final List<FileModel> _favoriteFiles = [];
   final Set<String> _filePaths = {}; // Set để theo dõi các đường dẫn đã gặp
   final String fixedDirectoryPath = '/storage/emulated/0/'; // Đường dẫn cố định
+  bool _isLoaded = false; // Đánh dấu nếu đã load file
 
   List<FileModel> get pdfFiles => _pdfFiles;
   List<FileModel> get favoriteFiles => _favoriteFiles;
 
+  // Thay đổi: kiểm tra nếu file đã load thì không cần load lại
   Future<void> loadPDFFiles() async {
+    if (_isLoaded) {
+      return;
+    }
     _pdfFiles.clear(); // Xóa danh sách file trước khi tải mới
     _filePaths.clear(); // Xóa set các đường dẫn file
     await baseDirectory();
+    _isLoaded = true; // Đánh dấu đã load file
     notifyListeners(); // Cập nhật UI sau khi load xong file
   }
 
@@ -57,36 +63,25 @@ class PDFProvider with ChangeNotifier {
               var fileModel = FileModel(file: entity);
               _pdfFiles.add(fileModel);
               _filePaths.add(entity.path); // Thêm đường dẫn vào set
-              if (kDebugMode) {
-                print("PDF File Name : ${entity.path.split("/").last}");
-              }
             }
           }
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print("Error scanning directory: $e");
+        print(e);
       }
     }
   }
 
+  // Thay đổi trạng thái yêu thích của file
   void toggleFavorite(FileModel fileModel) {
-    fileModel.isFavorite = !fileModel.isFavorite;
+    fileModel.isFavorite = !fileModel.isFavorite; // Đổi trạng thái isFavorite
     if (fileModel.isFavorite) {
-      if (!_favoriteFiles.contains(fileModel)) {
-        _favoriteFiles.add(fileModel);
-      }
+      _favoriteFiles.add(fileModel); // Thêm file vào danh sách yêu thích
     } else {
-      _favoriteFiles.remove(fileModel);
+      _favoriteFiles.remove(fileModel); // Xóa file khỏi danh sách yêu thích
     }
-
-    // Cập nhật danh sách tất cả các file để đảm bảo không có trùng lặp
-    int index = _pdfFiles.indexWhere((f) => f.file.path == fileModel.file.path);
-    if (index != -1) {
-      _pdfFiles[index] = fileModel;
-    }
-
-    notifyListeners(); // Cập nhật UI sau khi toggle xong
+    notifyListeners(); // Thông báo để cập nhật UI
   }
 }

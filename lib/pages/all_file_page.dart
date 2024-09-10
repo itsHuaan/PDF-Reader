@@ -39,6 +39,7 @@ class _AllFilePageState extends State<AllFilePage> {
   Widget build(BuildContext context) {
     final files = context.watch<PDFProvider>().pdfFiles;
     final int fileLength = files.length;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -59,7 +60,7 @@ class _AllFilePageState extends State<AllFilePage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(fileLength > 1 ? '$fileLength files' : '$fileLength file'),
+            child: Text(fileLength == 1 ? '$fileLength File' : '$fileLength Files'),
           ),
           Consumer<PDFProvider>(
             builder: (context, value, child) {
@@ -84,7 +85,7 @@ class _AllFilePageState extends State<AllFilePage> {
                         fileModel: pdfFileModel,
                         onTap: (fileModel) => openPDF(fileModel),
                         onFavoriteToggle: (fileModel) {
-                          value.toggleFavorite(fileModel);
+                          value.toggleFavorite(fileModel); // Gọi toggleFavorite
                         },
                       );
                     },
@@ -93,7 +94,6 @@ class _AllFilePageState extends State<AllFilePage> {
               }
             },
           ),
-          const SizedBox(height: 15.0),
         ],
       ),
     );

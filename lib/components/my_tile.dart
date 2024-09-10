@@ -62,7 +62,7 @@ class MyTile extends StatelessWidget {
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w300,
                   ),
-                ), // Hiển thị ngày tạo
+                ),
               ],
             ),
             const Spacer(),

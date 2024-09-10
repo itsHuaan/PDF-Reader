@@ -8,37 +8,50 @@ import 'package:provider/provider.dart';
 class FavoriteFilePage extends StatelessWidget {
   const FavoriteFilePage({super.key});
 
+  void openPDF(BuildContext context, FileModel fileModel) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PDFViewPage(
+          file: fileModel.file,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final favoriteFiles = context.watch<PDFProvider>().favoriteFiles;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: favoriteFiles.length,
-              itemBuilder: (context, index) {
-                FileModel pdfFileModel = favoriteFiles[index];
-                return MyTile(
-                  fileModel: pdfFileModel,
-                  onTap: (fileModel) => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PDFViewPage(
-                        file: fileModel.file,
-                      ),
-                    ),
-                  ),
-                  onFavoriteToggle: (fileModel) {
-                    context.read<PDFProvider>().toggleFavorite(fileModel);
-                  },
-                );
-              },
+
+    return favoriteFiles.isEmpty
+        ? Center(
+            child: Text(
+              "You haven't added any favorite files yet.",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          )
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: favoriteFiles.length,
+                  itemBuilder: (context, index) {
+                    FileModel favoriteFile = favoriteFiles[index];
+                    return MyTile(
+                      fileModel: favoriteFile,
+                      onTap: (fileModel) => openPDF(context, fileModel),
+                      onFavoriteToggle: (fileModel) {
+                        Provider.of<PDFProvider>(context, listen: false).toggleFavorite(fileModel); // Cập nhật trạng thái yêu thích
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
   }
 }

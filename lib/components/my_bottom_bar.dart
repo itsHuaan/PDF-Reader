@@ -11,26 +11,29 @@ class MyBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CurvedNavigationBar(
-      onTap: onTap,
-      height: 60,
-      animationDuration: const Duration(milliseconds: 300),
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      color: Theme.of(context).colorScheme.primary,
-      items: [
-        Icon(
-          AntDesign.file_fill,
-          color: Theme.of(context).colorScheme.inversePrimary,
-        ),
-        Icon(
-          Icons.history_rounded,
-          color: Theme.of(context).colorScheme.inversePrimary,
-        ),
-        Icon(
-          Icons.star_rounded,
-          color: Theme.of(context).colorScheme.inversePrimary,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: CurvedNavigationBar(
+        onTap: onTap,
+        height: 60,
+        animationDuration: const Duration(milliseconds: 300),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.primary,
+        items: [
+          Icon(
+            AntDesign.file_fill,
+            color: Theme.of(context).colorScheme.inversePrimary,
+          ),
+          Icon(
+            Icons.history_rounded,
+            color: Theme.of(context).colorScheme.inversePrimary,
+          ),
+          Icon(
+            Icons.star_rounded,
+            color: Theme.of(context).colorScheme.inversePrimary,
+          ),
+        ],
+      ),
     );
   }
 }
