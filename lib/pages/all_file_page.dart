@@ -37,8 +37,7 @@ class _AllFilePageState extends State<AllFilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final files = context.watch<PDFProvider>().pdfFiles;
-    final int fileLength = files.length;
+    final files = context.watch<PDFProvider>().allFiles;
 
     return Center(
       child: Column(
@@ -60,11 +59,13 @@ class _AllFilePageState extends State<AllFilePage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(fileLength == 1 ? '$fileLength File' : '$fileLength Files'),
+            child: Text(
+              files.length == 1 ? '${files.length} File' : '${files.length} Files',
+            ),
           ),
           Consumer<PDFProvider>(
             builder: (context, value, child) {
-              if (value.pdfFiles.isEmpty) {
+              if (value.allFiles.isEmpty) {
                 return Expanded(
                   child: Center(
                     child: Text(
@@ -80,7 +81,7 @@ class _AllFilePageState extends State<AllFilePage> {
                   child: ListView.builder(
                     itemCount: files.length,
                     itemBuilder: (context, index) {
-                      FileModel pdfFileModel = value.pdfFiles[index];
+                      FileModel pdfFileModel = value.allFiles[index];
                       return MyTile(
                         fileModel: pdfFileModel,
                         onTap: (fileModel) => openPDF(fileModel),

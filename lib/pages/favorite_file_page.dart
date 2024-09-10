@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pdf_reader/components/my_text_field.dart';
 import 'package:pdf_reader/components/my_tile.dart';
 import 'package:pdf_reader/models/file_model.dart';
 import 'package:pdf_reader/models/pdf_provider.dart';
@@ -36,6 +37,25 @@ class FavoriteFilePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: MyTextField(
+                  hintText: 'Search',
+                  borderRadius: 50.0,
+                  suffixIcon: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.search_rounded,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Text(
+                  favoriteFiles.length == 1 ? '${favoriteFiles.length} File' : '${favoriteFiles.length} Files',
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: favoriteFiles.length,
@@ -45,7 +65,7 @@ class FavoriteFilePage extends StatelessWidget {
                       fileModel: favoriteFile,
                       onTap: (fileModel) => openPDF(context, fileModel),
                       onFavoriteToggle: (fileModel) {
-                        Provider.of<PDFProvider>(context, listen: false).toggleFavorite(fileModel); // Cập nhật trạng thái yêu thích
+                        Provider.of<PDFProvider>(context, listen: false).toggleFavorite(fileModel);
                       },
                     );
                   },

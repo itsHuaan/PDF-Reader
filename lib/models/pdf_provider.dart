@@ -1,29 +1,33 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:pdf_reader/models/file_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PDFProvider with ChangeNotifier {
-  List<FileModel> _pdfFiles = [];
+  final List<FileModel> _allFiles = [];
+  final List<FileModel> _recentFiles = [];
   final List<FileModel> _favoriteFiles = [];
-  final Set<String> _filePaths = {}; // Set để theo dõi các đường dẫn đã gặp
-  final String fixedDirectoryPath = '/storage/emulated/0/'; // Đường dẫn cố định
-  bool _isLoaded = false; // Đánh dấu nếu đã load file
+  final Set<String> _filePaths = {};
+  final String fixedDirectoryPath = '/storage/emulated/0/';
+  bool _isLoaded = false;
 
-  List<FileModel> get pdfFiles => _pdfFiles;
+  List<FileModel> get allFiles => _allFiles;
+  List<FileModel> get recentFiles => _recentFiles;
   List<FileModel> get favoriteFiles => _favoriteFiles;
 
-  // Thay đổi: kiểm tra nếu file đã load thì không cần load lại
   Future<void> loadPDFFiles() async {
     if (_isLoaded) {
       return;
     }
-    _pdfFiles.clear(); // Xóa danh sách file trước khi tải mới
-    _filePaths.clear(); // Xóa set các đường dẫn file
+    _allFiles.clear();
+    _filePaths.clear();
     await baseDirectory();
-    _isLoaded = true; // Đánh dấu đã load file
-    notifyListeners(); // Cập nhật UI sau khi load xong file
+    await _loadFavoriteFiles();
+    _isLoaded = true;
+    notifyListeners();
   }
 
   Future<void> baseDirectory() async {
@@ -33,7 +37,7 @@ class PDFProvider with ChangeNotifier {
     if (androidDeviceInfo.version.sdkInt < 30) {
       PermissionStatus permissionStatus = await Permission.storage.request();
       if (permissionStatus.isGranted) {
-        await getFiles(fixedDirectoryPath); // Sử dụng đường dẫn cố định
+        await getFiles(fixedDirectoryPath);
       } else {
         if (kDebugMode) {
           print("Permission denied");
@@ -42,7 +46,7 @@ class PDFProvider with ChangeNotifier {
     } else {
       PermissionStatus permissionStatus = await Permission.manageExternalStorage.request();
       if (permissionStatus.isGranted) {
-        await getFiles(fixedDirectoryPath); // Sử dụng đường dẫn cố định
+        await getFiles(fixedDirectoryPath);
       } else {
         if (kDebugMode) {
           print("Permission denied");
@@ -61,8 +65,8 @@ class PDFProvider with ChangeNotifier {
           if (entity.path.split(".").last == "pdf") {
             if (!_filePaths.contains(entity.path)) {
               var fileModel = FileModel(file: entity);
-              _pdfFiles.add(fileModel);
-              _filePaths.add(entity.path); // Thêm đường dẫn vào set
+              _allFiles.add(fileModel);
+              _filePaths.add(entity.path);
             }
           }
         }
@@ -74,14 +78,59 @@ class PDFProvider with ChangeNotifier {
     }
   }
 
-  // Thay đổi trạng thái yêu thích của file
-  void toggleFavorite(FileModel fileModel) {
-    fileModel.isFavorite = !fileModel.isFavorite; // Đổi trạng thái isFavorite
-    if (fileModel.isFavorite) {
-      _favoriteFiles.add(fileModel); // Thêm file vào danh sách yêu thích
-    } else {
-      _favoriteFiles.remove(fileModel); // Xóa file khỏi danh sách yêu thích
+  Future<void> _loadFavoriteFiles() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteFileData = prefs.getString('favorite_file_data') ?? '[]';
+    final List<dynamic> favoriteFileList = jsonDecode(favoriteFileData);
+
+    _favoriteFiles.clear();
+    for (var fileModel in _allFiles) {
+      final isFavorite = favoriteFileList.any((data) => data['path'] == fileModel.file.path);
+      fileModel.isFavorite = isFavorite;
+      if (isFavorite) {
+        _favoriteFiles.add(fileModel);
+      }
     }
-    notifyListeners(); // Thông báo để cập nhật UI
+  }
+
+  Future<void> _loadRecentFiles() async {
+    final prefs = await SharedPreferences.getInstance();
+    final recentFileData = prefs.getString('recent_file_data') ?? '[]';
+    final List<dynamic> recentFileList = jsonDecode(recentFileData);
+
+    _recentFiles.clear();
+    for (var data in recentFileList) {
+      var file = File(data['path']);
+      var fileModel = FileModel(file: file, isFavorite: data['isFavorite'] ?? false);
+      _recentFiles.add(fileModel);
+    }
+    _recentFiles.sort();
+  }
+
+  Future<void> _saveFavoriteFiles() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteFileData = _allFiles
+        .where((fileModel) => fileModel.isFavorite)
+        .map(
+          (fileModel) => {
+            'path': fileModel.file.path
+          },
+        )
+        .toList();
+    final favoriteFileDataString = jsonEncode(favoriteFileData);
+    await prefs.setString('favorite_file_data', favoriteFileDataString);
+  }
+
+  void toggleFavorite(FileModel fileModel) {
+    fileModel.isFavorite = !fileModel.isFavorite;
+    if (fileModel.isFavorite) {
+      if (!_favoriteFiles.contains(fileModel)) {
+        _favoriteFiles.add(fileModel);
+      }
+    } else {
+      _favoriteFiles.remove(fileModel);
+    }
+    _saveFavoriteFiles(); // Save favorite files to SharedPreferences
+    notifyListeners();
   }
 }

@@ -71,6 +71,7 @@ class MyTile extends StatelessWidget {
               icon: Icon(
                 fileModel.isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
                 color: fileModel.isFavorite ? Colors.yellow : null,
+                size: 35.0,
               ),
             ),
           ],
