@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class FavouriteFilePage extends StatelessWidget {
-  const FavouriteFilePage({super.key});
+class PDFViewPage extends StatelessWidget {
+  const PDFViewPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +9,7 @@ class FavouriteFilePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Favourite files"),
+          Text("PDF file"),
         ],
       ),
     );

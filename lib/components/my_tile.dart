@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:pdf_reader/models/file_model.dart';
 
 class MyTile extends StatelessWidget {
-  const MyTile({super.key});
+  final FileModel fileModel;
+  final void Function(FileModel) onTap;
+  final void Function(FileModel) onFavoriteToggle;
+
+  const MyTile({
+    super.key,
+    required this.fileModel,
+    required this.onTap,
+    required this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        onTap(fileModel);
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
@@ -28,18 +40,21 @@ class MyTile extends StatelessWidget {
                 size: 40.0,
               ),
             ),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("File name"),
-                Text("File created"),
+                Text(fileModel.file.path.split('/').last),
+                Text(fileModel.file.statSync().modified.toLocal().toString()), // Hiển thị ngày tạo
               ],
             ),
             const Spacer(),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.star_outline_rounded),
-            )
+              onPressed: () => onFavoriteToggle(fileModel),
+              icon: Icon(
+                fileModel.isFavorite ? Icons.star : Icons.star_outline_rounded,
+                color: fileModel.isFavorite ? Colors.yellow : null,
+              ),
+            ),
           ],
         ),
       ),

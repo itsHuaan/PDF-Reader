@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pdf_reader/components/my_app_bar.dart';
 import 'package:pdf_reader/components/my_bottom_bar.dart';
 import 'package:pdf_reader/pages/all_file_page.dart';
-import 'package:pdf_reader/pages/favourite_file_page.dart';
+import 'package:pdf_reader/pages/favorite_file_page.dart';
 import 'package:pdf_reader/pages/recent_file_page.dart';
 import 'package:pdf_reader/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const AllFilePage(),
     const RecentFilePage(),
-    const FavouriteFilePage()
+    const FavoriteFilePage()
   ];
 
   void navigateBottomBar(int index) {
