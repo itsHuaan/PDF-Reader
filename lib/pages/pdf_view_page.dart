@@ -14,7 +14,7 @@ class PDFViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(file.path.split('/').last),
+        title: Text(file.path.split('/').last.replaceAll('.pdf', '')),
       ),
       body: PDFView(
         filePath: file.path,
