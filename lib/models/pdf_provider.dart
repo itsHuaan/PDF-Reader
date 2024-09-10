@@ -101,9 +101,17 @@ class PDFProvider with ChangeNotifier {
 
     _recentFiles.clear();
     for (var data in recentFileList) {
-      var file = File(data['path']);
-      var fileModel = FileModel(file: file, isFavorite: data['isFavorite'] ?? false);
-      _recentFiles.add(fileModel);
+      try {
+        var file = File(data['path']);
+        if (await file.exists()) {
+          var fileModel = FileModel(file: file, isFavorite: data['isFavorite'] ?? false);
+          _recentFiles.add(fileModel);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print("Error loading file: ${data['path']} - $e");
+        }
+      }
     }
     _recentFiles.sort((a, b) => b.file.lastAccessedSync().compareTo(a.file.lastModifiedSync()));
   }
@@ -124,14 +132,16 @@ class PDFProvider with ChangeNotifier {
 
   Future<void> _saveRecentFiles() async {
     final prefs = await SharedPreferences.getInstance();
-    final recentFileData = _recentFiles
-        .map((fileModel) => {
-              'path': fileModel.file.path,
-              'isFavorite': fileModel.isFavorite
-            })
-        .toList();
-    final recentFileDataString = jsonEncode(recentFileData);
-    await prefs.setString('recent_file_data', recentFileDataString);
+    _recentFiles.removeWhere((fileModel) => !fileModel.file.existsSync());
+    final recentFileData = jsonEncode(
+      _recentFiles
+          .map((fileModel) => {
+                'path': fileModel.file.path,
+                'isFavorite': fileModel.isFavorite,
+              })
+          .toList(),
+    );
+    await prefs.setString('recent_file_data', recentFileData);
   }
 
   void toggleFavorite(FileModel fileModel) {
