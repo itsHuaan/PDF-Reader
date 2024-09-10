@@ -40,63 +40,59 @@ class _AllFilePageState extends State<AllFilePage> {
     final files = context.watch<PDFProvider>().allFiles;
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: MyTextField(
-              hintText: 'Search',
-              borderRadius: 50.0,
-              suffixIcon: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.search_rounded,
+      child: files.isEmpty
+          ? Center(
+              child: Text(
+                "There's no PDF file in your device.",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.inverseSurface,
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              files.length == 1 ? '${files.length} File' : '${files.length} Files',
-            ),
-          ),
-          Consumer<PDFProvider>(
-            builder: (context, value, child) {
-              if (value.allFiles.isEmpty) {
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      "There's no PDF file in your device",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.inverseSurface,
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: MyTextField(
+                    hintText: 'Search',
+                    borderRadius: 50.0,
+                    suffixIcon: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.search_rounded,
                       ),
                     ),
                   ),
-                );
-              } else {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: files.length,
-                    itemBuilder: (context, index) {
-                      FileModel pdfFileModel = value.allFiles[index];
-                      return MyTile(
-                        fileModel: pdfFileModel,
-                        onTap: (fileModel) => openPDF(fileModel),
-                        onFavoriteToggle: (fileModel) {
-                          value.toggleFavorite(fileModel); // Gọi toggleFavorite
-                        },
-                      );
-                    },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text(
+                    files.length == 1 ? '${files.length} File' : '${files.length} Files',
                   ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
+                ),
+                Consumer<PDFProvider>(
+                  builder: (context, value, child) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: files.length,
+                        itemBuilder: (context, index) {
+                          FileModel pdfFileModel = value.allFiles[index];
+                          return MyTile(
+                            fileModel: pdfFileModel,
+                            onTap: (fileModel) => openPDF(fileModel),
+                            onFavoriteToggle: (fileModel) {
+                              value.toggleFavorite(fileModel); // Gọi toggleFavorite
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
     );
   }
 }

@@ -26,6 +26,7 @@ class PDFProvider with ChangeNotifier {
     _filePaths.clear();
     await baseDirectory();
     await _loadFavoriteFiles();
+    await _loadRecentFiles();
     _isLoaded = true;
     notifyListeners();
   }
@@ -104,7 +105,7 @@ class PDFProvider with ChangeNotifier {
       var fileModel = FileModel(file: file, isFavorite: data['isFavorite'] ?? false);
       _recentFiles.add(fileModel);
     }
-    _recentFiles.sort();
+    _recentFiles.sort((a, b) => b.file.lastAccessedSync().compareTo(a.file.lastModifiedSync()));
   }
 
   Future<void> _saveFavoriteFiles() async {
@@ -121,6 +122,18 @@ class PDFProvider with ChangeNotifier {
     await prefs.setString('favorite_file_data', favoriteFileDataString);
   }
 
+  Future<void> _saveRecentFiles() async {
+    final prefs = await SharedPreferences.getInstance();
+    final recentFileData = _recentFiles
+        .map((fileModel) => {
+              'path': fileModel.file.path,
+              'isFavorite': fileModel.isFavorite
+            })
+        .toList();
+    final recentFileDataString = jsonEncode(recentFileData);
+    await prefs.setString('recent_file_data', recentFileDataString);
+  }
+
   void toggleFavorite(FileModel fileModel) {
     fileModel.isFavorite = !fileModel.isFavorite;
     if (fileModel.isFavorite) {
@@ -130,7 +143,23 @@ class PDFProvider with ChangeNotifier {
     } else {
       _favoriteFiles.remove(fileModel);
     }
-    _saveFavoriteFiles(); // Save favorite files to SharedPreferences
+
+    int recentIndex = _recentFiles.indexWhere((file) => file.file.path == fileModel.file.path);
+    if (recentIndex != -1) {
+      _recentFiles[recentIndex] = fileModel;
+    }
+
+    _saveFavoriteFiles();
+    _saveRecentFiles();
+    notifyListeners();
+  }
+
+  void addRecentFile(FileModel fileModel) {
+    _recentFiles.removeWhere((file) => file.file.path == fileModel.file.path);
+    final isFavorite = _favoriteFiles.any((file) => file.file.path == fileModel.file.path);
+    fileModel.isFavorite = isFavorite;
+    _recentFiles.insert(0, fileModel);
+    _saveRecentFiles();
     notifyListeners();
   }
 }
