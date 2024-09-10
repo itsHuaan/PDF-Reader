@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 
 class MyBottomBar extends StatelessWidget {
   final void Function(int)? onTap;
-  const MyBottomBar({super.key, this.onTap,});
+  const MyBottomBar({
+    super.key,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +16,19 @@ class MyBottomBar extends StatelessWidget {
       animationDuration: const Duration(milliseconds: 300),
       backgroundColor: Theme.of(context).colorScheme.surface,
       color: Theme.of(context).colorScheme.primary,
-      items: const [
-        Icon(Icons.file_present_rounded),
-        Icon(Icons.history_rounded),
-        Icon(Icons.favorite_rounded),
+      items: [
+        Icon(
+          Icons.file_present_rounded,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
+        Icon(
+          Icons.history_rounded,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
+        Icon(
+          Icons.favorite_rounded,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
       ],
     );
   }
