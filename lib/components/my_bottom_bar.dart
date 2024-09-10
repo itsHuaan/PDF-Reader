@@ -18,7 +18,7 @@ class MyBottomBar extends StatelessWidget {
         height: 60,
         animationDuration: const Duration(milliseconds: 300),
         backgroundColor: Theme.of(context).colorScheme.surface,
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.secondary,
         items: [
           Icon(
             AntDesign.file_fill,
