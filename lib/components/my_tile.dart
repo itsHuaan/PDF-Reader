@@ -38,7 +38,8 @@ class MyTile extends StatelessWidget {
               padding: EdgeInsets.only(right: 10.0),
               child: Icon(
                 AntDesign.file_pdf_fill,
-                size: 40.0,
+                size: 60.0,
+                color: Colors.red,
               ),
             ),
             Column(
@@ -46,11 +47,21 @@ class MyTile extends StatelessWidget {
               children: [
                 Text(
                   fileModel.file.path.split('/').last,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20.0,
                 ),
                 Text(
-                  'Created: ${DateFormat('dd/MM/yyyy').format(
+                  'Created: ${DateFormat('MMM dd, yyyy HH:mm:ss').format(
                     fileModel.file.statSync().modified.toLocal(),
                   )}',
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ), // Hiển thị ngày tạo
               ],
             ),
@@ -58,7 +69,7 @@ class MyTile extends StatelessWidget {
             IconButton(
               onPressed: () => onFavoriteToggle(fileModel),
               icon: Icon(
-                fileModel.isFavorite ? Icons.star : Icons.star_outline_rounded,
+                fileModel.isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
                 color: fileModel.isFavorite ? Colors.yellow : null,
               ),
             ),

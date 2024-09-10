@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class MyBottomBar extends StatelessWidget {
   final void Function(int)? onTap;
@@ -18,7 +19,7 @@ class MyBottomBar extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
       items: [
         Icon(
-          Icons.file_present_rounded,
+          AntDesign.file_fill,
           color: Theme.of(context).colorScheme.inversePrimary,
         ),
         Icon(
@@ -26,7 +27,7 @@ class MyBottomBar extends StatelessWidget {
           color: Theme.of(context).colorScheme.inversePrimary,
         ),
         Icon(
-          Icons.favorite_rounded,
+          Icons.star_rounded,
           color: Theme.of(context).colorScheme.inversePrimary,
         ),
       ],

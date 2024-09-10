@@ -38,9 +38,11 @@ class _AllFilePageState extends State<AllFilePage> {
   @override
   Widget build(BuildContext context) {
     final files = context.watch<PDFProvider>().pdfFiles;
+    final int fileLength = files.length;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(15.0),
@@ -54,6 +56,10 @@ class _AllFilePageState extends State<AllFilePage> {
                 ),
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text(fileLength > 1 ? '$fileLength files' : '$fileLength file'),
           ),
           Consumer<PDFProvider>(
             builder: (context, value, child) {
