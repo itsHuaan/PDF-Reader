@@ -42,28 +42,34 @@ class MyTile extends StatelessWidget {
                 color: Colors.red,
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fileModel.file.path.split('/').last,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+            // Use Expanded to prevent title from overlapping
+            Expanded(
+              flex: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileModel.file.path.split('/').last,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                Text(
-                  'Created: ${DateFormat('MMM dd, yyyy HH:mm:ss').format(
-                    fileModel.file.statSync().modified.toLocal(),
-                  )}',
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
+                  const SizedBox(
+                    height: 10.0, // Adjusted height
                   ),
-                ),
-              ],
+                  Text(
+                    'Created: ${DateFormat('MMM dd, yyyy HH:mm:ss').format(
+                      fileModel.file.statSync().modified.toLocal(),
+                    )}',
+                    style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w300,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
             const Spacer(),
             IconButton(

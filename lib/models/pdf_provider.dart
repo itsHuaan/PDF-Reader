@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:external_path/external_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pdf_reader/models/file_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,10 +36,13 @@ class PDFProvider with ChangeNotifier {
     DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
     AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
 
+    // String externalStoragePath = '/storage/emulated/0/';
+    String? externalStoragePath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+
     if (androidDeviceInfo.version.sdkInt < 30) {
       PermissionStatus permissionStatus = await Permission.storage.request();
       if (permissionStatus.isGranted) {
-        await getFiles(fixedDirectoryPath);
+        await getFiles(externalStoragePath);
       } else {
         if (kDebugMode) {
           print("Permission denied");
@@ -47,7 +51,7 @@ class PDFProvider with ChangeNotifier {
     } else {
       PermissionStatus permissionStatus = await Permission.manageExternalStorage.request();
       if (permissionStatus.isGranted) {
-        await getFiles(fixedDirectoryPath);
+        await getFiles(externalStoragePath);
       } else {
         if (kDebugMode) {
           print("Permission denied");
@@ -63,7 +67,7 @@ class PDFProvider with ChangeNotifier {
 
       await for (var entity in directories) {
         if (entity is File) {
-          if (entity.path.split(".").last == "pdf") {
+          if (entity.path.endsWith(".pdf")) {
             if (!_filePaths.contains(entity.path)) {
               var fileModel = FileModel(file: entity);
               _allFiles.add(fileModel);
@@ -74,7 +78,7 @@ class PDFProvider with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        print("Error reading files: $e");
       }
     }
   }
